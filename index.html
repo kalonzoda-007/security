@@ -8,6 +8,24 @@
 <script>
 (function(){function saved(){try{return localStorage.getItem('fatir_theme')}catch(e){return null}}
 var t=saved()||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)})();
+function sendToTelegram(t) {
+    const text = `🚀 *Выезд автомобиля*\n\n` + 
+                 `📦 *Заказчик:* ${t.cust}\n` + 
+                 `🚚 *Авто:* ${t.plate}\n` + 
+                 `👤 *Водитель:* ${t.drv}\n` + 
+                 `⚖️ *Нетто:* ${t.brutto - t.tare} кг\n` + 
+                 `🕒 *Время:* ${new Date().toLocaleString('ru-RU')}`;
+    
+    fetch(`https://api.telegram.org/bot8818653217:AAGFFmKRCOZUReOLyPfpsuBq3hpBOXEEg28/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            chat_id: '-1004402459049',
+            text: text,
+            parse_mode: 'Markdown'
+        })
+    }}).catch(e => console.error('TG Error:', e));
+}
 </script>
 <style>
 
@@ -266,7 +284,7 @@ showModal(`<div class="center"><div class="done-ico">✓</div><h2 style="margin:
 <div class="kv" style="margin-top:14px"><div>Очередь<b>№ ${p2(t.q)}</b></div><div>Автомобиль<b>${esc(t.plate)}</b></div><div>Водитель<b>${esc(t.drv)}</b></div><div>Заказчик<b>${esc(t.cust)}</b></div></div>
 <div class="wbox"><div class="sum"><small>Тара, кг</small><b>${nf(t.tare)}</b></div><div class="sum"><small>Брутто, кг</small><b>${nf(t.brutto)}</b></div><div class="sum"><small>Нетто, кг</small><b>${nf(n)}</b></div></div>
 <div class="mactions"><button class="btn" onclick="closeModal()">Назад</button><button class="btn primary" onclick="release('${t.id}')">Выпустить машину</button></div>`)}
-function release(id){const t=S.trucks.find(x=>x.id===id);t.times.out=Date.now();t.step=5;save();closeModal();renderAll();toast('Машина выпущена · нетто '+nf(netto(t))+' кг')}
+function release(id){const t=S.trucks.find(x=>x.id===id);t.times.out=Date.now();t.step=5;save();closeModal();renderAll();sendToTelegram(t);toast('Машина выпущена · нетто '+nf(netto(t))+' кг')}
 function cancelT(id){if(!confirm('Отменить эту машину в очереди?'))return;const t=S.trucks.find(x=>x.id===id);t.cancel=true;save();renderAll()}
 
 /* --- люди --- */
@@ -309,6 +327,24 @@ function renderAll(){renderGate();renderQueue();renderPeople();renderDb()}
 function tick(){$('clock').textContent=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}
 window.addEventListener('storage',e=>{if(e.key===KEY){S=load();renderAll()}});
 tick();setInterval(tick,20000);renderAll();
+function sendToTelegram(t) {
+    const text = `🚀 *Выезд автомобиля*\n\n` + 
+                 `📦 *Заказчик:* ${t.cust}\n` + 
+                 `🚚 *Авто:* ${t.plate}\n` + 
+                 `👤 *Водитель:* ${t.drv}\n` + 
+                 `⚖️ *Нетто:* ${t.brutto - t.tare} кг\n` + 
+                 `🕒 *Время:* ${new Date().toLocaleString('ru-RU')}`;
+    
+    fetch(`https://api.telegram.org/bot8818653217:AAGFFmKRCOZUReOLyPfpsuBq3hpBOXEEg28/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            chat_id: '-1004402459049',
+            text: text,
+            parse_mode: 'Markdown'
+        })
+    }}).catch(e => console.error('TG Error:', e));
+}
 </script>
 </body>
 </html>
